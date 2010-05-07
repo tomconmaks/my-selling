@@ -159,7 +159,8 @@ class Plugin:
 		
 	def see_item(self,event):
 		""" Вызывается при щелчке на позиции во фрейме товаров """
-		sel=self.tree.selection()[0]
+		try:sel=self.tree.selection()[0]
+		except:return
 		if sel in self.node_ext:self.build_add_frame(self.node_ext[sel])
 		elif sel in self.node_list:
 			self.buld_edit_frame(self.node_list[sel])
