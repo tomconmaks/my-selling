@@ -209,11 +209,7 @@ class Plugin:
 		except:id=1
 		self.app.app.db.execute('insert into article values (?,?,?,?,?,?,?,?)',(id,txt,self.cur_dep+1,self.current_id,'stick',1,0,0))
 		self.app.app.con.commit()
-		self.build_tree()
-		self.tools_frame.destroy()
-		self.tools_frame=Labelframe(self.win)
-		self.tools_frame.grid(row=0,column=2,rowspan=2)
-
+		self.redraw()
 
 	def add_art(self):
 		""" Добавление товара """
@@ -239,10 +235,7 @@ class Plugin:
 		except:id=1
 		self.app.app.db.execute('insert into article values (?,?,?,?,?,?,?,?)',(id,txt,self.cur_dep+1,self.current_id,'item',edit,summa,0))
 		self.app.app.con.commit()
-		self.build_tree()
-		self.tools_frame.destroy()
-		self.tools_frame=Labelframe(self.win)
-		self.tools_frame.grid(row=0,column=2,rowspan=2)
+		self.redraw()
 		
 	def buld_edit_frame(self,sel):
 		""" Если щелкнули на товар или категорию то показываем фрейм редактирования """
@@ -318,11 +311,8 @@ class Plugin:
 		edit=self.edit_var.get()
 		self.app.app.db.execute('update article set name=?, sum=?, edit=? where id=?',(txt,summa,edit,self.current_id))
 		self.app.app.con.commit()
-		self.build_tree()
-		self.tools_frame.destroy()
-		self.tools_frame=Labelframe(self.win)
-		self.tools_frame.grid(row=0,column=2,rowspan=2)
-		
+		self.redraw()
+
 	def del_art(self):
 		""" Удаляем товар или категорию"""
 		self.app.app.db.execute('delete from article where id=?',(self.current_id,))
@@ -331,6 +321,8 @@ class Plugin:
 		self.tools_frame.destroy()
 		self.tools_frame=Labelframe(self.win)
 		self.tools_frame.grid(row=0,column=2,rowspan=2)		
+
+
 
 	def edit_cat(self):
 		""" Сохраняем измененную категорию """
@@ -344,7 +336,23 @@ class Plugin:
 
 		self.app.app.db.execute('update article set name=? where id=?',(txt,self.current_id))
 		self.app.app.con.commit()
+		self.redraw()
+
+	def redraw(self):
+		""" Перерисовывает дерево элементов, сохраняя текущее выделение """
+		c=None
 		self.build_tree()
+		for x in self.node_list:
+			if self.node_list[x]==self.current_id:c=x
+
+
 		self.tools_frame.destroy()
 		self.tools_frame=Labelframe(self.win)
-		self.tools_frame.grid(row=0,column=2,rowspan=2)		
+		self.tools_frame.grid(row=0,column=2,rowspan=2)
+		if c<>None:
+			self.tree.see(c)
+			self.tree.selection_set(c)
+
+		try:self.buld_edit_frame(self.current_id)
+		except IndexError:pass
+
