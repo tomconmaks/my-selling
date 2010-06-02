@@ -232,7 +232,7 @@ class Plugin:
 		f=f.replace('\\','/')
 		self.app.app.sets.save_pdf='/'.join(f.split('/')[:-1])
 		doc=csv.writer(open(f,'w'),delimiter=';',lineterminator='\n',quoting=csv.QUOTE_ALL)
-		doc.writerow([u'То"вар'.encode('cp1251'),u'Остаток'.encode('cp1251'),u'Стоимость'.encode('cp1251')])
+		doc.writerow([u'Товар'.encode('cp1251'),u'Остаток'.encode('cp1251'),u'Стоимость'.encode('cp1251')])
 
 
 
