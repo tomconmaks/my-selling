@@ -73,7 +73,7 @@ class Plugin:
 		self.pdf_but=Button(self.win,text='В pdf',image=self.app.app.img['pdf'],compound='left',command=self.generate_pdf)
 		self.pdf_but.pack(side='left',padx=5,pady=5,anchor=W)
 
-		self.csv_but=Button(self.win,text='В csv',image=self.app.app.img['pdf'],compound='left',command=self.generate_csv)
+		self.csv_but=Button(self.win,text='В csv',image=self.app.app.img['csv'],compound='left',command=self.generate_csv)
 		self.csv_but.pack(side='left',padx=5,pady=5,anchor=W)
 
 
