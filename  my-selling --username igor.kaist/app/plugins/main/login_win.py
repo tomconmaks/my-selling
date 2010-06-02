@@ -86,5 +86,5 @@ class Main:
 		else:
 			box.showerror(title='Ошибка!',message='Не верный пароль')
 			self.passw.delete(0,END)
-		
+			self.passw.focus()
 		
