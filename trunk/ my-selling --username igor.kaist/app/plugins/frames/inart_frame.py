@@ -64,7 +64,7 @@ class Plugin:
 		self.add_but.pack(side='right')
 
 		
-		self.rate_v=Combobox(self.add_f,width=3,font=('bold',20))
+		self.rate_v=Combobox(self.add_f,width=6,font=('bold',16))
 		self.rate_v.set('1')
 		self.rate_v.pack(side='right',padx=10)
 		self.rate_v['values']=range(1,21)		
@@ -172,11 +172,17 @@ class Plugin:
 		""" добавление товара во временный список """
 		txt=self.dep_name.get('0.0',END).replace('\r','').replace('\n',' ').replace('\t',' ')
 
+		try:razves=eval(self.app.app.sets.razves)[self.cur_dep]
+		except AttributeError:razves=0
+
+
 		if len(txt)<2:
 			box.showerror(title='Ошибка',message='Не выбран товар!')
 			self.win.deiconify()
 			return
-		try:rate=int(self.rate_v.get())
+		try:
+			if razves:rate=float(self.rate_v.get().replace(',','.'))
+			else:rate=int(self.rate_v.get().replace(',','.'))
 		except:
 			box.showerror(title='Ошибка',message='Не верное количество!')
 			self.win.deiconify()

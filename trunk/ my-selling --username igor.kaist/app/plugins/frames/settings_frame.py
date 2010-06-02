@@ -82,6 +82,9 @@ class Deps():
 		""" управление отделами """
 		self.app=app
 		self.win=Frame(self.app.win)
+		try:self.razves=eval(self.app.app.app.sets.razves)
+		except:self.razves=[0,0,0,0,0,0,0,0,0,0]
+		
 		self.lst=Listbox(self.win,width=25,height=10,font=('normal',12))
 		self.lst.bind('<ButtonRelease-1>',self.lst_command)
 		self.lst.grid(row=0,column=0,rowspan=20,padx=10,pady=10)
@@ -96,12 +99,15 @@ class Deps():
 		self.rb2.grid(row=2,column=1,sticky=W,padx=10,pady=10,columnspan=2)
 		self.rb3=Radiobutton(self.win,text='Запретить продажу при отсутствии товара',value=2,variable=self.rb_var)
 		self.rb3.grid(row=3,column=1,sticky=W,padx=10,pady=10,columnspan=2)			
-		
+		self.ch_var=IntVar()
+		self.ch_var.set(0)
+		self.ch_int=Checkbutton(self.win,text='Возможность продажи "в развес"',variable=self.ch_var)
+		self.ch_int.grid(row=4,column=1,sticky=W,padx=10,pady=10,columnspan=2)
 		
 		self.del_but=Button(self.win,text='Не использовать',image=self.app.app.app.img['delete'],compound='left',command=self.del_dep)
-		self.del_but.grid(row=4,column=1)
+		self.del_but.grid(row=5,column=1)
 		self.save_but=Button(self.win,text='Сохранить',image=self.app.app.app.img['save'],compound='left',command=self.save)
-		self.save_but.grid(row=4,column=2)	
+		self.save_but.grid(row=5,column=2)	
 		self.sel=None
 		self.update_list()
 
@@ -121,13 +127,17 @@ class Deps():
 		self.edit_ent.delete(0,END)
 		self.edit_ent.insert(0,self.c_list[self.sel][1])
 		self.rb_var.set(self.c_list[self.sel][2])
+		self.ch_var.set(self.razves[self.sel])
 		
 	def save(self):
 		""" сохраняем изменения """
 		if self.sel==None:return
 		txt=self.edit_ent.get()
 		v=self.rb_var.get()
+		self.razves[self.sel]=self.ch_var.get()
+		self.app.app.app.sets.razves=repr(self.razves)
 		self.app.app.app.db.execute('update dep set name=?, warning=? where id=?',(txt,v,self.sel+1))
+		
 		self.app.app.app.con.commit()
 		self.app.reload=True
 		self.update_list()
