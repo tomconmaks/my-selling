@@ -129,7 +129,7 @@ class Plugin:
 
 
 		def get_menu(node):
-			self.app.app.db.execute('select id,name,type from article where dep=? and parent=?',(self.cur_dep+1,self.node_list[node],))
+			self.app.app.db.execute('select id,name,type from article where dep=? and parent=? order by name',(self.cur_dep+1,self.node_list[node],))
 			for x in self.app.app.db.fetchall():
 				if x[2]=='item':
 					node1=self.tree.insert(node, 'end', text=x[1],tags='norm')
@@ -141,7 +141,7 @@ class Plugin:
 			node2=self.tree.insert(node, 'end', text='Добавить',tags=('ext'))
 			self.node_ext[node2]=self.node_list[node]
 					
-		self.app.app.db.execute('select id,name,type from article where dep=? and parent=-1',(self.cur_dep+1,))
+		self.app.app.db.execute('select id,name,type from article where dep=? and parent=-1 order by name',(self.cur_dep+1,))
 
 		for x in self.app.app.db.fetchall():
 			if x[2]=='item':

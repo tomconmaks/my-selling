@@ -199,7 +199,7 @@ class Main:
 		self.popup = Menu(self.app.win, tearoff=0,font=('normal',12))
 		
 		def get_menu(id):
-			self.app.db.execute('select id,name,type from article where dep=? and parent=?',(self.cur_dep+1,id,))
+			self.app.db.execute('select id,name,type from article where dep=? and parent=? order by name',(self.cur_dep+1,id,))
 			popup = Menu(self.app.win, tearoff=0,font=('normal',12))
 			for x in self.app.db.fetchall():
 				if x[2]=='item':
@@ -208,7 +208,7 @@ class Main:
 			return popup
 			
 		# Сначала  проходимся по товарам в корне
-		self.app.db.execute('select id,name,type from article where dep=? and parent=-1',(self.cur_dep+1,))
+		self.app.db.execute('select id,name,type from article where dep=? and parent=-1 order by name',(self.cur_dep+1,))
 
 		for x in self.app.db.fetchall():
 			if x[2]=='item':

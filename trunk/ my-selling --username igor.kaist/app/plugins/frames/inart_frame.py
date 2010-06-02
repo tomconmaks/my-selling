@@ -123,14 +123,14 @@ class Plugin:
 		self.popup = Menu(self.win, tearoff=0,font=('normal',12))
 		
 		def get_menu(id):
-			self.app.app.db.execute('select id,name,type from article where dep=? and parent=?',(self.cur_dep+1,id,))
+			self.app.app.db.execute('select id,name,type from article where dep=? and parent=? order by name',(self.cur_dep+1,id,))
 			popup = Menu(self.win, tearoff=0,font=('normal',12))
 			for x in self.app.app.db.fetchall():
 				if x[2]=='item':
 					popup.add_command(label=x[1],command=lambda z=x[0]:self.command_handler(z))
 				else:popup.add_cascade(label=x[1],menu=get_menu(x[0]))
 			return popup		
-		self.app.app.db.execute('select id,name,type from article where dep=? and parent=-1',(self.cur_dep+1,))
+		self.app.app.db.execute('select id,name,type from article where dep=? and parent=-1 order by name',(self.cur_dep+1,))
 
 		for x in self.app.app.db.fetchall():
 			if x[2]=='item':

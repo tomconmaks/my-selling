@@ -172,7 +172,7 @@ class Art:
 			return
 		self.lab_var.set('Поиск....')
 		self.win.update()
-		self.app.app.app.db.execute('select id,rate,sum from article where myLower(name) like ?',(txt,))
+		self.app.app.app.db.execute('select id,rate,sum from article where myLower(name) like ? order by name',(txt,))
 		k=0
 		for x in self.app.app.app.db.fetchall():
 			x=list(x)
