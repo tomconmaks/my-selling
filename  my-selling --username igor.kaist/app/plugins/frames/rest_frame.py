@@ -26,6 +26,7 @@ from  MultiListbox import MultiListbox
 import pdf
 from date_time import date_now,time_now,norm_date
 import tkFileDialog
+import csv
 
 
 name='Остатки товара'
@@ -70,8 +71,12 @@ class Plugin:
 		self.all_label=Label(self.win,textvariable=self.lab_var,font=('bold',12))
 		self.all_label.pack(padx=5)
 		self.pdf_but=Button(self.win,text='В pdf',image=self.app.app.img['pdf'],compound='left',command=self.generate_pdf)
-		self.pdf_but.pack(padx=5,pady=5,anchor=W)
-		
+		self.pdf_but.pack(side='left',padx=5,pady=5,anchor=W)
+
+		self.csv_but=Button(self.win,text='В csv',image=self.app.app.img['pdf'],compound='left',command=self.generate_csv)
+		self.csv_but.pack(side='left',padx=5,pady=5,anchor=W)
+
+
 		self.callback()
 		
 	def init_deps(self):
@@ -216,6 +221,65 @@ class Plugin:
 		self.win.deiconify()
 			
 
+		
+	def generate_csv(self):
+		""" генерация csv """
+		try:path=self.app.app.sets.save_pdf
+		except:path=''
+		filename='Остатки по отделу %s на %s.csv'%(self.cur_dep+1,norm_date(date_now()))
+		f=tkFileDialog.asksaveasfilename(initialdir=path,initialfile=filename)
+		if not f:return
+		f=f.replace('\\','/')
+		self.app.app.sets.save_pdf='/'.join(f.split('/')[:-1])
+		doc=csv.writer(open(f,'w'),delimiter=';',lineterminator='\n',quoting=csv.QUOTE_ALL)
+		doc.writerow([u'То"вар'.encode('cp1251'),u'Остаток'.encode('cp1251'),u'Стоимость'.encode('cp1251')])
 
+
+
+		r=self.rb_var.get()
+		rate=self.rate_ent.get()
+		self.app.app.db.execute('select name from dep where id=?',(self.cur_dep+1,))
+		
+		dep_name=self.app.app.db.fetchall()[0][0]
+	
+
+		if r==0:
+			self.app.app.db.execute('select id,rate,sum,type from article where dep=?',(self.cur_dep+1,))
+		else:
+			try:rate=int(rate)
+			except:return
+			self.app.app.db.execute('select id,rate,sum,type from article where dep=? and rate<?',(self.cur_dep+1,rate))
+		rez1=self.app.app.db.fetchall()
+	
+		all_rate=0
+		all_sum=0
+		for x in rez1:
+
+			t=[]
+			flag=True
+			self.app.app.db.execute('select name,edit,sum,parent from article where id=?',(x[0],))
+			s=self.app.app.db.fetchall()[0]
+			par=s[3]
+			t.append(s[0])
+			if par==-1:flag=0
+			while flag:
+				self.app.app.db.execute('select name,parent from article where id=?',(par,))
+				rez=self.app.app.db.fetchall()[0]
+				if rez[1]==-1:
+					t.append(rez[0])
+					flag=False
+				else:
+					t.append(rez[0])
+					par=rez[1]
+			cat_lst=' > '.join(t[::-1])
+			if x[3]=='item':
+				doc.writerow([cat_lst.encode('cp1251'),x[1],x[2]])
+
+				all_rate+=x[1]
+				all_sum+=x[1]*x[2]
+
+		self.lab_var.set('Наименований: %s, количество: %s, на сумму %s'%(len(rez1),all_rate,all_sum))
+
+		self.win.deiconify()
 		
 
