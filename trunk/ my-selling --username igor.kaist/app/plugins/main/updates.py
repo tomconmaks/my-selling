@@ -25,6 +25,9 @@ from ttk import *
 import time
 import os
 import zipfile
+import subprocess
+import sys
+import tkMessageBox as box
 
 class Main:
 	def __init__(self,app):
@@ -60,7 +63,12 @@ class Main:
 	
 
 		self.win.update()
-
+		s=box.askokcancel(title='Обновления завершены',message='После применения обновления\nнеобходимо перезапустить программу\nПерезапустить?')
+		if s:
+			self.app.root.destroy()
+			try:subprocess.Popen(sys.argv[0])
+			except WindowsError,x:subprocess.Popen('pythonw '+sys.argv[0])
+			sys.exit(0)
 
 		self.app.change_user()
 	def update(self,name):
