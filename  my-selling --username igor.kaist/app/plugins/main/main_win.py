@@ -67,7 +67,7 @@ class Main:
 
 
 
-		self.rate_v=Combobox(self.add_f,width=3,font=('bold',20))
+		self.rate_v=Combobox(self.add_f,width=6,font=('bold',16))
 		self.rate_v.set('1')
 		self.rate_v.pack(side='right',padx=10)
 		self.rate_v['values']=range(1,21)
@@ -141,11 +141,18 @@ class Main:
 
 	def add_handler(self):
 		""" Добавление продажи """
+		try:razves=eval(self.app.sets.razves)[self.cur_dep]
+		except AttributeError:razves=0
+
 		try:sum=float(self.sum_ent.get().replace(',','.'))
 		except:
 			box.showerror(title='Ошибка',message='Не верная сумма!')
 			return
-		try:rate=int(self.rate_v.get())
+		try:
+			if razves:
+				rate=float(self.rate_v.get().replace(',','.'))
+			else:
+				rate=int(self.rate_v.get().replace(',','.'))				
 		except:
 			box.showerror(title='Ошибка',message='Не верное количество!')
 			return
@@ -175,7 +182,7 @@ class Main:
 
 
 		dt,tm=date_now(),time_now()
-		self.app.db.execute('insert into income values (?,?,?,?,?,?,?,?,0)',(dt,tm,int(self.cur_dep)+1,txt,self.cat_id,sum,int(rate),self.app.user.decode('utf-8')))
+		self.app.db.execute('insert into income values (?,?,?,?,?,?,?,?,0)',(dt,tm,int(self.cur_dep)+1,txt,self.cat_id,sum,rate,self.app.user.decode('utf-8')))
 		
 		if self.cat_id<>-1:
 			self.app.db.execute('select rate from article where id=?',(self.cat_id,))
