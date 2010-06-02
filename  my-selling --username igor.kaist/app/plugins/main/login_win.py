@@ -75,6 +75,7 @@ class Main:
 		self.enter['state']='normal'
 		self.enter['text']='Войти (%s)'%name.encode('utf-8')
 		self.name=name
+		self.passw.focus()
 	
 	def set_enter(self,event=None):
 		passw=md5py.new(self.passw.get().encode('utf-8')).hexdigest()
