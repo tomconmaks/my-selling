@@ -124,7 +124,7 @@ class Main:
 			if out[6]<>-1:
 				out[1]=str(out[1])+' →'
 
-			out.insert(5,x[3]*x[4])
+			out.insert(5,round(x[3]*x[4],2))
 			self.lst.insert(END,out)
 		self.lst.see(END)
 		
